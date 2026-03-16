@@ -1,20 +1,16 @@
 import { redirect } from 'next/navigation';
-import { auth, signIn, signOut } from '../auth';
+import { auth, signOut } from '../auth';
 import AvatarPage from './AvatarPage';
 
 export default async function Home() {
   const session = await auth();
 
-  // Middleware already redirects unauthenticated requests to /api/auth/signin,
-  // but guard here too so TypeScript knows session is defined below.
   if (!session?.user) {
-    // Trigger the Google sign-in flow.
-    await signIn('google');
-    redirect('/'); // unreachable; signIn redirects
+    redirect('/api/auth/signin');
   }
 
-  const user = session.user!;
-  const tenantId = (session as unknown as Record<string, string>).tenantId;
+  const user = session.user;
+  const tenantId = (session as any).tenantId;
 
   return (
     <main className="page">
