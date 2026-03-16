@@ -10,7 +10,7 @@ const client = new Runway({ apiKey: process.env.RUNWAYML_API_SECRET });
 async function fetchMemoryContext(tenantId: string): Promise<string> {
   const url = `${MEMORY_ENGINE_BASE}?limit=20&tenant=${encodeURIComponent(tenantId)}`;
   try {
-    const res = await fetch(url, { headers: { tenant: tenantId } });
+    const res = await fetch(url, { headers: { 'x-tenant-id': tenantId } });
     if (!res.ok) {
       console.warn(
         `Memory Engine returned ${res.status} for tenant ${tenantId}: ${res.statusText}`,
