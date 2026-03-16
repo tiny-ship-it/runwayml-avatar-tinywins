@@ -68,8 +68,11 @@ export async function POST(req: Request) {
   const memoryContext = await fetchMemoryContext(resolvedTenantId);
 
   const userName = session.user.name ?? session.user.email;
-  const systemPrompt = memoryContext
-    ? `You are Tiny, ${userName}'s AI assistant. Here is your recent memory context:\n\n${memoryContext}\n\nUse this context to provide personalised, contextually aware responses.`
+  // Enforce RunwayML 2000 character limit on the personality field
+  const safeContext = memoryContext.length > 1500 ? memoryContext.substring(0, 1500) + "..." : memoryContext;
+
+  const systemPrompt = safeContext
+    ? `You are Tiny, ${userName}\'s AI assistant. Recent context:\n\n${safeContext}\n\nUse this context to provide personalised, contextually aware responses.`
     : `You are Tiny, ${userName}'s AI assistant. Be helpful, friendly, and concise.`;
 
   // ── Avatar personality update ───────────────────────────────────────────────
